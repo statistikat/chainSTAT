@@ -9,3 +9,5 @@ Description: More about what it does (maybe more than one line)
 License: What license is it under?
 Encoding: UTF-8
 LazyData: true
+git config --global user.name "Julia Knöbl"
+git config --global user.email "Julia.Knoebl@statistik.gv.at
