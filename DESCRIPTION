@@ -13,3 +13,8 @@ RoxygenNote: 7.1.1
 Imports: 
     dplyr,
     magrittr
+Authors@R: 
+    person(given = "Julia",
+           family = "Knoebl",
+           role = "cre",
+           email = "julia.knoebl@statistik.gv.at")
