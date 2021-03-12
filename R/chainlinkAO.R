@@ -2,63 +2,63 @@
 #' Creates chainlinked time series with annual overlap
 #'
 #' Using the annual overlap approach this function chainlinks univariate time series with respect to the given base year. Frequency of time series can also be greater than 1.
-#' @param nom univariate time series at current prices
-#' @param vjp univariate time series at previous year prices
-#' @param basis Base year. Defaults to 2010
+#' @param cup univariate time series at current prices (cup)
+#' @param pyp univariate time series at previous year prices (pyp)
+#' @param ref_year Base year. Defaults to 2010
 #' @param index If TRUE it returns an index series, where the base year is 100, if FALSE returns volume series. Defaults to FALSE.
 #'
-#' @return a univariate time series with volume oder index values
+#' @return a univariate time series with volume or index values
 #' @export
 
-chainlinkAO <- function(nom,
-                        vjp,
-                        basis = 2015,
+chainlinkAO <- function(cup,
+                        pyp,
+                        ref_year = 2015,
                         index = F) {
-  # NA Werte Löschen, damit ein fehlendes quartal bei den vjp zB keine Fehler im Programm verursacht
-  nom <- stats::na.omit(nom)
-  vjp <- stats::na.omit(vjp)
+  # delete NA values to avoid resulting errors
+  cup <- stats::na.omit(cup)
+  pyp <- stats::na.omit(pyp)
 
-  if (stats::time(nom)[1] > stats::time(vjp)[1]){
-    vjp <- stats::window(vjp, start = stats::start(nom))
-  } else if (stats::time(nom)[1] < stats::time(vjp)[1]){
-    nom <- stats::window(nom, start = stats::start(vjp))
+  if (stats::time(cup)[1] > stats::time(pyp)[1]){
+    pyp <- stats::window(pyp, start = stats::start(cup))
+  } else if (stats::time(cup)[1] < stats::time(pyp)[1]){
+    cup <- stats::window(cup, start = stats::start(pyp))
   }
-  if (stats::time(nom)[length(nom)] < stats::time(vjp)[length(vjp)]){
-    vjp <- stats::window(vjp, end = stats::end(nom))
-  } else if (stats::time(nom)[length(nom)] > stats::time(vjp)[length(vjp)]){
-    nom <- stats::window(nom, end = stats::end(vjp))
+  if (stats::time(cup)[length(cup)] < stats::time(pyp)[length(pyp)]){
+    pyp <- stats::window(pyp, end = stats::end(cup))
+  } else if (stats::time(cup)[length(cup)] > stats::time(pyp)[length(pyp)]){
+    cup <- stats::window(cup, end = stats::end(pyp))
   }
 
-  # folgende Fehler sollten nicht auftauchen, nur falls das kuerzen nicht funktioniert.
-  if (length(nom) != length(vjp)) {
-    stop("Nominelle und Werte zu VJ Basis m\u00FCssen die gleiche L\u00E4nge haben")
+  # the following errors should only ocur when the truncation of series failes
+  if (length(cup) != length(pyp)) {
+    stop("Values at current (cup) and previous year prices (pyp) need to have the same length")
   }
-  if (stats::frequency(nom) != stats::frequency(vjp)) {
-    stop("Nominelle und Werte zu VJ Basis m\u00FCssen die gleiche Frequenz haben")
+  if (stats::frequency(cup) != stats::frequency(pyp)) {
+    stop("Values at current (cup) and previous year prices (pyp) need to have the same frequency")
   }
-  if (all(stats::start(nom) == stats::start(vjp)) == F) {
-    warning("Nominelle und Werte zu VJ Basis sollten zum gleichen Zeitpunkt anfangen")
+  if (all(stats::start(cup) == stats::start(pyp)) == F) {
+    warning("Values at current (cup) and previous year prices (pyp) should start at the same time")
   }
 
   vol <- NULL
 
-  if (stats::frequency(nom) == 1) {
-    growthRate <- log(vjp / stats::lag (nom, k = -1))
+  if (stats::frequency(cup) == 1) {
+    growthRate <- log(pyp / stats::lag (cup, k = -1))
     vol <-
       stats::ts(NA,
-                start = stats::start(nom),
-                end = stats::end(nom))
-    vol[stats::time(vol) == basis] <- nom[stats::time(nom) == basis]
-    vol[stats::time(vol) > basis] <-
-      nom[stats::time(nom) == basis] * exp(cumsum(growthRate[stats::time(growthRate) > basis]))
-    vol[stats::time(vol) < basis] <-
-      nom[stats::time(nom) == basis] / rev(exp(cumsum(rev(growthRate[stats::time(growthRate) <= basis]))))
+                start = stats::start(cup),
+                end = stats::end(cup))
+    vol[stats::time(vol) == ref_year] <- cup[stats::time(cup) == ref_year]
+    vol[stats::time(vol) > ref_year] <-
+      cup[stats::time(cup) == ref_year] * exp(cumsum(growthRate[stats::time(growthRate) > ref_year]))
+    vol[stats::time(vol) < ref_year] <-
+      cup[stats::time(cup) == ref_year] / rev(exp(cumsum(rev(growthRate[stats::time(growthRate) <= ref_year]))))
   } else {
-    # welches ist das letzte quartal?
-    lastq <- stats::cycle(nom)[length(nom)]
+    # which is the last quarter?
+    lastq <- stats::cycle(cup)[length(cup)]
 
-    # Jahresdurchschnitte (fuer das angefangene Jahr den Durchschnitt vom verfuegbaren Zeitraum)
-    av <- lapply(c("nom", "vjp"), function(x){
+    # Yearly averages (of the available points in time)
+    av <- lapply(c("cup", "pyp"), function(x){
       input <- get(x)
       zr <- rep(stats::aggregate(input, FUN = mean),
                 each = stats::frequency(input))
@@ -71,12 +71,12 @@ chainlinkAO <- function(nom,
                 start = stats::start(input),
                 frequency = stats::frequency(input))
     }) %>%
-      `names<-`(c("nom", "vjp"))
+      `names<-`(c("cup", "pyp"))
 
-    # zu Jahresdurchschnittspreisen
-    jdp <- nom *
-      (av$nom / av$vjp) /
-      (nom / vjp)
+    # at yearly averaged prices
+    jdp <- cup *
+      (av$cup / av$pyp) /
+      (cup / pyp)
 
     vol <-
       stats::ts(
@@ -86,37 +86,37 @@ chainlinkAO <- function(nom,
         frequency = stats::frequency(jdp)
       )
 
-    # im Basisjahr gleich zu JDP
-    vol[stats::time(vol) >= basis &
-          stats::time(vol) < (basis + 1)] <-
-      jdp[stats::time(vol) >= basis &
-            stats::time(vol) < (basis + 1)]
+    # in the base year it equals the yearly averages
+    vol[stats::time(vol) >= ref_year &
+          stats::time(vol) < (ref_year + 1)] <-
+      jdp[stats::time(vol) >= ref_year &
+            stats::time(vol) < (ref_year + 1)]
 
-    # Wachstumsraten davor und danach ausrechnen
+    # calculate growth rates before and after
     before <- stats::window(jdp / stats::lag(jdp),
-                            end = c(basis, 0))
+                            end = c(ref_year, 0))
     after <- stats::window(jdp / stats::lag(jdp, k = -1),
-                           start = basis + 1)
+                           start = ref_year + 1)
 
-    # um den Sprung zwischen den Jahren zu korrigieren,
-    # wird fuer den Zeitraum VOR dem Basisjahr im 4. Quartal korrigiert ( Wachstum 4. Q JDP / 1. VJDP (gleicher Preis!)
-    # NACH dem Basisjahr wird im 1. quartal korrigiert: 1.Q VJDP / 4. Q JDP--> gleicher Preis
-    q4_cor <- jdp / stats::lag(vjp)
-    q1_cor <- vjp / stats::lag(jdp, k = -1)
+    # To ensure coninious TS over the years we correct
+    #  - the 4th quarter BEFORE the base year (Q4 at yearly average/Q1 at pyp (same price!)  -> growth rate)
+    #  - the 1st quarter AFTER the base year (Q1 at pyp/Q4 at yearly average (same price!)  -> growth rate)
+    q4_cor <- jdp / stats::lag(pyp)
+    q1_cor <- pyp / stats::lag(jdp, k = -1)
 
-    after[(stats::cycle(after) == 1)] <- q1_cor[(stats::cycle(q1_cor) == 1) & (stats::time(q1_cor) >= (basis + 1))]
-    before[(stats::cycle(before) == 4)] <- q4_cor[(stats::cycle(q4_cor) == 4) & (stats::time(q4_cor) < basis)]
+    after[(stats::cycle(after) == 1)] <- q1_cor[(stats::cycle(q1_cor) == 1) & (stats::time(q1_cor) >= (ref_year + 1))]
+    before[(stats::cycle(before) == 4)] <- q4_cor[(stats::cycle(q4_cor) == 4) & (stats::time(q4_cor) < ref_year)]
 
-    # Das kumulierte Produkt der Wachstumsraten wird an das Basisjahr angelegt
-    vol[stats::time(vol) >= (basis + 1)] <-
-      exp(cumsum(log(after))) * vol[stats::time(vol) == basis + 1 - 1/stats::frequency(vol)]
+    # Cumulative products of growth rates on the base year
+    vol[stats::time(vol) >= (ref_year + 1)] <-
+      exp(cumsum(log(after))) * vol[stats::time(vol) == ref_year + 1 - 1/stats::frequency(vol)]
 
-    vol[stats::time(vol) < basis] <-
-      exp(rev(cumsum(rev(log(before))))) * vol[stats::time(vol) == basis]
+    vol[stats::time(vol) < ref_year] <-
+      exp(rev(cumsum(rev(log(before))))) * vol[stats::time(vol) == ref_year]
 
   }
   if (index) {
-    vol <- vol / stats::aggregate(nom, FUN = mean)[stats::time(stats::aggregate(nom)) == basis] * 100
+    vol <- vol / stats::aggregate(cup, FUN = mean)[stats::time(stats::aggregate(cup)) == ref_year] * 100
   }
   return(vol)
 }

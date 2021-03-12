@@ -11,7 +11,7 @@ growthRate(x, mode = "additive", ref_lag = NULL)
 
 \item{mode}{additive or multiplicative growth rates. Defaults to additive.}
 
-\item{ref_lag}{lag to reference period. defaults to frequency of the series, i.e. yoy growth rates. To get qoq growth rates change to 1.}
+\item{ref_lag}{lag to reference period. Defaults to frequency of the series, i.e. yoy growth rates. To get qoq growth rates change to 1.}
 }
 \value{
 time series with growth rates

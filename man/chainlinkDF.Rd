@@ -2,20 +2,18 @@
 % Please edit documentation in R/chainlinkDF.R
 \name{chainlinkDF}
 \alias{chainlinkDF}
-\title{Erstellt einen Data Frame mit veketten Volumen}
+\title{Get a data frame of chained volumes}
 \usage{
-chainlinkDF(df_list, ts_output = F, basis = 2015)
+chainlinkDF(df_list, ref_year = 2015)
 }
 \arguments{
-\item{df_list}{Eine Liste, bei der die Elemente jeweils ein Data Frame sind mit nominellen Werten bzw. Werten zu VJP.}
+\item{df_list}{A list, where the list elements are each a data frame consisting of current price (cup) and previous year price (pyp) values.}
 
-\item{ts_output}{logical. Soll der Output eine Zeitreihe sein, oder nicht. Defaults to FALSE}
-
-\item{basis}{Referenzjahr für Verkettung. Default ist 2015}
+\item{ref_year}{Reference year for Annual Overlap. Defaults to 2015.}
 }
 \value{
-einen data.table, die Werte sind verkette Volumen
+a data.frame of chained volumes.
 }
 \description{
-Erstellt einen Data Frame mit veketten Volumen
+Get a data frame of chained volumes
 }

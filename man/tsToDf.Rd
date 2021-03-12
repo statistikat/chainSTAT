@@ -2,18 +2,18 @@
 % Please edit documentation in R/tsToDf.R
 \name{tsToDf}
 \alias{tsToDf}
-\title{Convert TS to dataframe}
+\title{Convert time series to dataframe}
 \usage{
 tsToDf(x, lang = "en")
 }
 \arguments{
 \item{x}{A time series dataframe without colums indicating the time period}
 
-\item{lang}{Language german ("de") or englisch "en" colnames (YEAR, QUARTER). Defaukts to "en"}
+\item{lang}{Language. Possible values: "de" for German or  "en" for englisch. Defaults to "en"}
 }
 \value{
-a data. frame
+a data. frame with (one or) two additional columns to indicate YEAR and QUARTER/MONTH if frequency of input tiome series is 4 or 12 respectively.
 }
 \description{
-Convert TS to dataframe
+Convert time series to dataframe
 }

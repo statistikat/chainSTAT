@@ -4,19 +4,19 @@
 \alias{chainlinkAO}
 \title{Creates chainlinked time series with annual overlap}
 \usage{
-chainlinkAO(nom, vjp, basis = 2015, index = F)
+chainlinkAO(cup, pyp, ref_year = 2015, index = F)
 }
 \arguments{
-\item{nom}{univariate time series at current prices}
+\item{cup}{univariate time series at current prices (cup)}
 
-\item{vjp}{univariate time series at previous year prices}
+\item{pyp}{univariate time series at previous year prices (pyp)}
 
-\item{basis}{Base year. Defaults to 2010}
+\item{ref_year}{Base year. Defaults to 2010}
 
 \item{index}{If TRUE it returns an index series, where the base year is 100, if FALSE returns volume series. Defaults to FALSE.}
 }
 \value{
-a univariate time series with volume oder index values
+a univariate time series with volume or index values
 }
 \description{
 Using the annual overlap approach this function chainlinks univariate time series with respect to the given base year. Frequency of time series can also be greater than 1.

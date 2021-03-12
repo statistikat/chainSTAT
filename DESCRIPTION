@@ -18,3 +18,5 @@ Authors@R:
            family = "Knoebl",
            role = "cre",
            email = "julia.knoebl@statistik.gv.at")
+Suggests: 
+    data.table

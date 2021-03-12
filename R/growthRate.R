@@ -3,7 +3,7 @@
 #'
 #' @param x A time series (uni- or multivariate).
 #' @param mode additive or multiplicative growth rates. Defaults to additive.
-#' @param ref_lag lag to reference period. defaults to frequency of the series, i.e. yoy growth rates. To get qoq growth rates change to 1.
+#' @param ref_lag lag to reference period. Defaults to frequency of the series, i.e. yoy growth rates. To get qoq growth rates change to 1.
 #'
 #' @return time series with growth rates
 #' @export

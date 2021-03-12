@@ -1,10 +1,10 @@
 # Author: Julia Knoebl
-#' Convert TS to dataframe
+#' Convert time series to dataframe
 #'
 #' @param x A time series dataframe without colums indicating the time period
-#' @param lang Language german ("de") or englisch "en" colnames (YEAR, QUARTER). Defaukts to "en"
+#' @param lang Language. Possible values: "de" for German or  "en" for englisch. Defaults to "en"
 #'
-#' @return a data. frame
+#' @return a data. frame with (one or) two additional columns to indicate YEAR and QUARTER/MONTH if frequency of input tiome series is 4 or 12 respectively.
 #' @export
 
 tsToDf <- function(x,
@@ -28,7 +28,7 @@ tsToDf <- function(x,
     }
     return(tempdf)
   } else {
-    warning("ACHTUNG: die Zeitreihe scheint weder Quartals, noch monats , noch Jahresdaten zu enthalten, die Spalte QUARTER/QUARTAL ist daher evtl nicht aussagekraeftig.")
+    warning("The time series appers to be neither quarterly, monthly or yearly data. Column QUARTER/QUARTAL may be missleading.")
     return(tempdf)
   }
 }
