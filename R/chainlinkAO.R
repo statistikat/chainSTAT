@@ -1,13 +1,14 @@
 # Author Julia Knoebl
 #' Creates chainlinked time series with annual overlap
 #'
-#' Using the annual overlap approach this function chainlinks univariate time series with respect to the given base year. Frequency of time series can also be greater than 1.
+#' Using the annual overlap approach this function chainlinks univariate time series with respect to the given base year.
 #' @param cup univariate time series at current prices (cup)
 #' @param pyp univariate time series at previous year prices (pyp)
 #' @param ref_year Base year. Defaults to 2010
 #' @param index If TRUE it returns an index series, where the base year is 100, if FALSE returns volume series. Defaults to FALSE.
 #'
 #' @return a univariate time series with volume or index values
+#' @details For more information on Annual Overlap consult the IMF Manual for QNA (p.185, §71) or Eurostats Handbook on QNA (p. 184, §6.47)
 #' @export
 
 chainlinkAO <- function(cup,

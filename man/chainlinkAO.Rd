@@ -19,5 +19,8 @@ chainlinkAO(cup, pyp, ref_year = 2015, index = F)
 a univariate time series with volume or index values
 }
 \description{
-Using the annual overlap approach this function chainlinks univariate time series with respect to the given base year. Frequency of time series can also be greater than 1.
+Using the annual overlap approach this function chainlinks univariate time series with respect to the given base year.
+}
+\details{
+For more information on Annual Overlap consult the IMF Manual for QNA (p.185, §71) or Eurostats Handbook on QNA (p. 184, §6.47)
 }
