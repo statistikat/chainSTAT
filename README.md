@@ -7,10 +7,11 @@
 
 <!-- badges: end -->
 
-chainSTAT is a small package that includes the functions needed to run
+`chainSTAT` is a small package that includes the functions needed to run
 the seasonal adjustment code for national accounts by Statistics
 Austria. The main objective are the chainlinking functions (using annual
-overlap).
+overlap). The functions are designed for the use in QNA but may be
+useful in other contexts as well.
 
 ## Installation
 
@@ -24,7 +25,10 @@ devtools::install_github("statistikat/chainSTAT")
 
 ## Example
 
-This is a basic example which shows you how to solve a common problem:
+This example shows how to use the `chainlinkAO` function. For
+demonstration we first generate a time series that represents the
+current price series and deflate it to mimic the corresponding pyp
+series.
 
 ``` r
 library(chainSTAT)
