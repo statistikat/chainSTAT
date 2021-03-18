@@ -67,9 +67,7 @@ chainlinkDF <- function(df_list,
         stats::ts(start = c(x[1, year_idx], x[1, freq_idx[2]]),
                   frequency = freq)
     })
-    if (is.data.frame(df_list[[nom_name]])){
-      output <- "DF"
-    } else if (data.table::is.data.table(df_list[[nom_name]])){
+    if ("data.table" %in% class(df_list[[nom_name]])) {
       output <- "DT"
     } else {
       output <- "DF"
