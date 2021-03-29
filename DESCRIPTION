@@ -1,7 +1,7 @@
 Package: chainSTAT
 Type: Package
 Title: chainSTAT
-Version: 0.1.4
+Version: 0.1.5
 Author: Julia Knöbl
 Maintainer: Julia Knöbl <julia.knoebl@statistik.gv.at>
 Description: create chainlinked volume series from current price and previous years price series using annual overlap.

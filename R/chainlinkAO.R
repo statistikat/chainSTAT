@@ -94,27 +94,36 @@ chainlinkAO <- function(cup,
             stats::time(vol) < (ref_year + 1)]
 
     # calculate growth rates before and after
-    before <- stats::window(jdp / stats::lag(jdp),
-                            end = c(ref_year, 0))
-    after <- stats::window(jdp / stats::lag(jdp, k = -1),
-                           start = ref_year + 1)
+    # only if there are observations before base year
+    if(stats::time(vol)[1] < ref_year){
+      before <- stats::window(jdp / stats::lag(jdp),
+                              end = c(ref_year, 0))
+      # To ensure coninious TS over the years we correct
+      #  - the 4th quarter BEFORE the base year (Q4 at yearly average/Q1 at pyp (same price!)  -> growth rate)
+      #  - the 1st quarter AFTER the base year (Q1 at pyp/Q4 at yearly average (same price!)  -> growth rate)
+      q4_cor <- jdp / stats::lag(pyp)
 
-    # To ensure coninious TS over the years we correct
-    #  - the 4th quarter BEFORE the base year (Q4 at yearly average/Q1 at pyp (same price!)  -> growth rate)
-    #  - the 1st quarter AFTER the base year (Q1 at pyp/Q4 at yearly average (same price!)  -> growth rate)
-    q4_cor <- jdp / stats::lag(pyp)
-    q1_cor <- pyp / stats::lag(jdp, k = -1)
+      before[(stats::cycle(before) == 4)] <- q4_cor[(stats::cycle(q4_cor) == 4) & (stats::time(q4_cor) < ref_year)]
+      # Cumulative products of growth rates on the base year
+      vol[stats::time(vol) < ref_year] <-
+        exp(rev(cumsum(rev(log(before))))) * vol[stats::time(vol) == ref_year]
+    }
+    # only if there are observations after the base year
+    if(stats::time(vol)[length(vol)]>= ref_year + 1){
+      after <- stats::window(jdp / stats::lag(jdp, k = -1),
+                             start = ref_year + 1)
+      # To ensure coninious TS over the years we correct
+      #  - the 4th quarter BEFORE the base year (Q4 at yearly average/Q1 at pyp (same price!)  -> growth rate)
+      #  - the 1st quarter AFTER the base year (Q1 at pyp/Q4 at yearly average (same price!)  -> growth rate)
+      q1_cor <- pyp / stats::lag(jdp, k = -1)
 
-    after[(stats::cycle(after) == 1)] <- q1_cor[(stats::cycle(q1_cor) == 1) & (stats::time(q1_cor) >= (ref_year + 1))]
-    before[(stats::cycle(before) == 4)] <- q4_cor[(stats::cycle(q4_cor) == 4) & (stats::time(q4_cor) < ref_year)]
+      after[(stats::cycle(after) == 1)] <- q1_cor[(stats::cycle(q1_cor) == 1) & (stats::time(q1_cor) >= (ref_year + 1))]
 
-    # Cumulative products of growth rates on the base year
-    vol[stats::time(vol) >= (ref_year + 1)] <-
-      exp(cumsum(log(after))) * vol[stats::time(vol) == ref_year + 1 - 1/stats::frequency(vol)]
 
-    vol[stats::time(vol) < ref_year] <-
-      exp(rev(cumsum(rev(log(before))))) * vol[stats::time(vol) == ref_year]
-
+      # Cumulative products of growth rates on the base year
+      vol[stats::time(vol) >= (ref_year + 1)] <-
+        exp(cumsum(log(after))) * vol[stats::time(vol) == ref_year + 1 - 1/stats::frequency(vol)]
+    }
   }
   if (index) {
     vol <- vol / stats::aggregate(cup, FUN = mean)[stats::time(stats::aggregate(cup)) == ref_year] * 100
