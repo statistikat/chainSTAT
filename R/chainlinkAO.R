@@ -98,7 +98,7 @@ chainlinkAO <- function(cup,
     if(stats::time(vol)[1] < ref_year){
       before <- stats::window(jdp / stats::lag(jdp),
                               end = c(ref_year, 0))
-      # To ensure coninious TS over the years we correct
+      # To ensure continious TS over the years we correct
       #  - the 4th quarter BEFORE the base year (Q4 at yearly average/Q1 at pyp (same price!)  -> growth rate)
       #  - the 1st quarter AFTER the base year (Q1 at pyp/Q4 at yearly average (same price!)  -> growth rate)
       q4_cor <- jdp / stats::lag(pyp)
@@ -112,7 +112,7 @@ chainlinkAO <- function(cup,
     if(stats::time(vol)[length(vol)]>= ref_year + 1){
       after <- stats::window(jdp / stats::lag(jdp, k = -1),
                              start = ref_year + 1)
-      # To ensure coninious TS over the years we correct
+      # To ensure continious TS over the years we correct
       #  - the 4th quarter BEFORE the base year (Q4 at yearly average/Q1 at pyp (same price!)  -> growth rate)
       #  - the 1st quarter AFTER the base year (Q1 at pyp/Q4 at yearly average (same price!)  -> growth rate)
       q1_cor <- pyp / stats::lag(jdp, k = -1)

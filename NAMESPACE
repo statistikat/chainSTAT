@@ -3,6 +3,7 @@
 export("%>%")
 export(chainlinkAO)
 export(chainlinkDF)
+export(contGrowth)
 export(growthRate)
 export(tsToDf)
 importFrom(magrittr,"%>%")
