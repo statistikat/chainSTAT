@@ -1,7 +1,7 @@
 Package: chainSTAT
 Type: Package
 Title: chainSTAT
-Version: 0.1.6
+Version: 0.1.7
 Author: Julia Schieber-Knöbl
 Maintainer: Julia Schieber-Knöbl <julia.schieber-knoebl@statistik.gv.at>
 Description: create chainlinked volume series from current price and previous years price series using annual overlap. Compute growth rates and contributions to growth.
@@ -9,7 +9,7 @@ License: GPL (>= 3)
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.2.0
+RoxygenNote: 7.2.3
 Imports: 
     magrittr
 Authors@R: 
